@@ -154,6 +154,20 @@ fun AdminPanelScreen(
                             tint = Color.White
                         )
                     }
+                    IconButton(
+                        onClick = {
+                            authViewModel.signOut()
+                            navController.navigate("login") {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        }
+                    ) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.Logout,
+                            "Logout",
+                            tint = Color.White
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -984,166 +998,6 @@ fun ListingCard(listing: ListingModel, listingViewModel: ListingViewModel) {
 }
 
 @Composable
-fun AdminAnalyticsTab(users: List<UserModel>, listings: List<ListingModel>) {
-    val rentalUsers = users.count { it.role == com.mavrix.Olx_Rental.data.model.UserRole.RENTAL }
-    val laborUsers = users.count { it.role == com.mavrix.Olx_Rental.data.model.UserRole.LABOR }
-    val verifiedUsers = users.count { it.isVerified }
-    val activeListings = listings.count { it.isActive }
-    
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(16.dp)
-    ) {
-        item {
-            Column {
-                Text(
-                    "Analytics & Reports",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text("View platform statistics and insights", 
-                    fontSize = 14.sp, 
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-        }
-
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(4.dp),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        "User Statistics",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    
-                    Spacer(Modifier.height(16.dp))
-                    
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        item {
-                            AnalyticsItem(
-                                "Verified Users",
-                                verifiedUsers.toString(),
-                                "${if (users.isNotEmpty()) (verifiedUsers * 100 / users.size) else 0}%",
-                                Color(0xFF4CAF50)
-                            )
-                        }
-                        item {
-                            AnalyticsItem(
-                                "Rental Users",
-                                rentalUsers.toString(),
-                                "${if (users.isNotEmpty()) (rentalUsers * 100 / users.size) else 0}%",
-                                Color(0xFF2196F3)
-                            )
-                        }
-                        item {
-                            AnalyticsItem(
-                                "Labor Users",
-                                laborUsers.toString(),
-                                "${if (users.isNotEmpty()) (laborUsers * 100 / users.size) else 0}%",
-                                Color(0xFFFF9800)
-                            )
-                        }
-                        item {
-                            AnalyticsItem(
-                                "Total Users",
-                                users.size.toString(),
-                                "100%",
-                                Color(0xFF9C27B0)
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(4.dp),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        "Listing Statistics",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    
-                    Spacer(Modifier.height(16.dp))
-                    
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        item {
-                            AnalyticsItem(
-                                "Active Listings",
-                                activeListings.toString(),
-                                "${if (listings.isNotEmpty()) (activeListings * 100 / listings.size) else 0}%",
-                                Color(0xFF4CAF50)
-                            )
-                        }
-                        item {
-                            AnalyticsItem(
-                                "Inactive",
-                                (listings.size - activeListings).toString(),
-                                "${if (listings.isNotEmpty()) ((listings.size - activeListings) * 100 / listings.size) else 0}%",
-                                Color(0xFFF44336)
-                            )
-                        }
-                        item {
-                            AnalyticsItem(
-                                "Total Listings",
-                                listings.size.toString(),
-                                "100%",
-                                Color(0xFF2196F3)
-                            )
-                        }
-                    }
-                    
-                    Spacer(Modifier.height(20.dp))
-                    HorizontalDivider()
-                    Spacer(Modifier.height(16.dp))
-                    
-                    Text(
-                        "Category Breakdown",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    Spacer(Modifier.height(12.dp))
-                    
-                    val categories = listings.groupBy { it.category }
-                    categories.forEach { (category, items) ->
-                        CategoryBreakdownItem(
-                            category.name,
-                            items.size,
-                            if (listings.isNotEmpty()) (items.size * 100 / listings.size) else 0
-                        )
-                        Spacer(Modifier.height(8.dp))
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
 fun AnalyticsItem(
     label: String,
     value: String,
@@ -1258,6 +1112,313 @@ fun CategoryBreakdownItem(category: String, count: Int, percentage: Int) {
                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun AdminAnalyticsTab(users: List<UserModel>, listings: List<ListingModel>) {
+    val totalUsers = users.size
+    val verifiedUsers = users.count { it.isVerified }
+    val adminUsers = users.count { it.isAdmin }
+    val totalListings = listings.size
+    val activeListings = listings.count { it.isActive }
+    
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        item {
+            Text(
+                "Analytics & Reports",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                "Platform statistics and insights",
+                fontSize = 16.sp,
+                color = Color.Gray
+            )
+        }
+        
+        // User Statistics
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(4.dp),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(modifier = Modifier.padding(24.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(
+                            Icons.Filled.People,
+                            contentDescription = null,
+                            tint = Color(0xFF2196F3),
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            "User Statistics",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    
+                    Spacer(Modifier.height(20.dp))
+                    
+                    StatRow(
+                        label = "Total Users",
+                        value = totalUsers,
+                        percentage = 100,
+                        color = Color(0xFF2196F3)
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    StatRow(
+                        label = "Verified Users",
+                        value = verifiedUsers,
+                        percentage = if (totalUsers > 0) (verifiedUsers * 100 / totalUsers) else 0,
+                        color = Color(0xFF4CAF50)
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    StatRow(
+                        label = "Admin Users",
+                        value = adminUsers,
+                        percentage = if (totalUsers > 0) (adminUsers * 100 / totalUsers) else 0,
+                        color = Color(0xFFF44336)
+                    )
+                }
+            }
+        }
+        
+        // Listing Statistics
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(4.dp),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(modifier = Modifier.padding(24.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(
+                            Icons.Filled.Inventory,
+                            contentDescription = null,
+                            tint = Color(0xFF4CAF50),
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            "Listing Statistics",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    
+                    Spacer(Modifier.height(20.dp))
+                    
+                    StatRow(
+                        label = "Total Listings",
+                        value = totalListings,
+                        percentage = 100,
+                        color = Color(0xFF4CAF50)
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    StatRow(
+                        label = "Active Listings",
+                        value = activeListings,
+                        percentage = if (totalListings > 0) (activeListings * 100 / totalListings) else 0,
+                        color = Color(0xFF2196F3)
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    StatRow(
+                        label = "Inactive Listings",
+                        value = totalListings - activeListings,
+                        percentage = if (totalListings > 0) ((totalListings - activeListings) * 100 / totalListings) else 0,
+                        color = Color(0xFFFF9800)
+                    )
+                }
+            }
+        }
+        
+        // Category Distribution
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(4.dp),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(modifier = Modifier.padding(24.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(
+                            Icons.Filled.Category,
+                            contentDescription = null,
+                            tint = Color(0xFFFF9800),
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            "Category Distribution",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    
+                    Spacer(Modifier.height(20.dp))
+                    
+                    val categories = listings.groupBy { it.category }
+                    categories.forEach { (category, items) ->
+                        StatRow(
+                            label = category.name,
+                            value = items.size,
+                            percentage = if (totalListings > 0) (items.size * 100 / totalListings) else 0,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(Modifier.height(12.dp))
+                    }
+                }
+            }
+        }
+        
+        // Platform Health
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                ),
+                elevation = CardDefaults.cardElevation(4.dp),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        Icons.Filled.TrendingUp,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Spacer(Modifier.height(16.dp))
+                    Text(
+                        "Platform Health",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        "All systems operational",
+                        fontSize = 16.sp,
+                        color = Color.Gray,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                "${if (totalUsers > 0) (verifiedUsers * 100 / totalUsers) else 0}%",
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF4CAF50)
+                            )
+                            Text(
+                                "Verified",
+                                fontSize = 14.sp,
+                                color = Color.Gray
+                            )
+                        }
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                "${if (totalListings > 0) (activeListings * 100 / totalListings) else 0}%",
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF2196F3)
+                            )
+                            Text(
+                                "Active",
+                                fontSize = 14.sp,
+                                color = Color.Gray
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun StatRow(
+    label: String,
+    value: Int,
+    percentage: Int,
+    color: Color
+) {
+    Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                label,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                value.toString(),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = color
+            )
+        }
+        Spacer(Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(8.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(Color.LightGray.copy(alpha = 0.3f))
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(percentage / 100f)
+                        .background(color)
+                )
+            }
+            Spacer(Modifier.width(12.dp))
+            Text(
+                "$percentage%",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = color,
+                modifier = Modifier.width(40.dp),
+                textAlign = TextAlign.End
+            )
         }
     }
 }
