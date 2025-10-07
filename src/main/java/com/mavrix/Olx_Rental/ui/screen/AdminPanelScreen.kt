@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mavrix.Olx_Rental.R
@@ -61,27 +62,48 @@ fun AdminPanelScreen(
     // Check if user is actually admin
     if (currentUser?.isAdmin != true) {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White),
             contentAlignment = Alignment.Center
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(24.dp)
+            ) {
                 Icon(
                     Icons.Filled.Lock,
                     contentDescription = null,
-                    modifier = Modifier.size(64.dp),
-                    tint = Color.Gray
+                    modifier = Modifier.size(80.dp),
+                    tint = MaterialTheme.colorScheme.primary
                 )
-                Spacer(Modifier.height(16.dp))
-                Text("Access Denied", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                Text("You don't have admin privileges", color = Color.Gray)
                 Spacer(Modifier.height(24.dp))
-                Button(onClick = {
-                    authViewModel.signOut()
-                    navController.navigate("login") {
-                        popUpTo(0) { inclusive = true }
-                    }
-                }) {
-                    Text("Sign Out")
+                Text(
+                    "Access Denied", 
+                    fontSize = 24.sp, 
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    "You don't have admin privileges", 
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(Modifier.height(32.dp))
+                Button(
+                    onClick = {
+                        authViewModel.signOut()
+                        navController.navigate("login") {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Text("Sign Out", fontSize = 16.sp)
                 }
             }
         }
@@ -95,7 +117,7 @@ fun AdminPanelScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Box(
                             modifier = Modifier
-                                .size(44.dp)
+                                .size(40.dp)
                                 .clip(CircleShape)
                                 .background(Color.White),
                             contentAlignment = Alignment.Center
@@ -104,26 +126,33 @@ fun AdminPanelScreen(
                                 painter = painterResource(id = R.drawable.bird_icon),
                                 contentDescription = "Rentieo Logo",
                                 modifier = Modifier
-                                    .size(36.dp)
+                                    .size(32.dp)
                                     .clip(CircleShape),
                                 contentScale = ContentScale.Crop
                             )
                         }
                         Spacer(Modifier.width(12.dp))
-                        Text(tabs[selectedTab])
+                        Column {
+                            Text(
+                                "Admin Panel", 
+                                fontSize = 18.sp,
+                                color = Color.White
+                            )
+                            Text(
+                                tabs[selectedTab],
+                                fontSize = 14.sp,
+                                color = Color.White.copy(alpha = 0.8f)
+                            )
+                        }
                     }
                 },
                 actions = {
                     IconButton(onClick = { /* Notifications */ }) {
-                        Icon(Icons.Outlined.Notifications, "Notifications")
-                    }
-                    IconButton(onClick = {
-                        authViewModel.signOut()
-                        navController.navigate("login") {
-                            popUpTo(0) { inclusive = true }
-                        }
-                    }) {
-                        Icon(Icons.Filled.Logout, "Logout")
+                        Icon(
+                            Icons.Outlined.Notifications, 
+                            "Notifications",
+                            tint = Color.White
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -132,75 +161,53 @@ fun AdminPanelScreen(
                     actionIconContentColor = Color.White
                 )
             )
-        }
-    ) { padding ->
-        Row(modifier = Modifier.fillMaxSize().padding(padding)) {
-            // Sidebar
-            NavigationRail(
-                modifier = Modifier.fillMaxHeight(),
-                header = {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(60.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primary),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                currentUser?.name?.firstOrNull()?.uppercase() ?: "A",
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        }
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            currentUser?.name ?: "Admin",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Surface(
-                            color = Color.Red,
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.padding(top = 4.dp)
-                        ) {
-                            Text(
-                                "ADMIN",
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
-                            )
-                        }
-                    }
-                }
+        },
+        bottomBar = {
+            NavigationBar(
+                modifier = Modifier.height(70.dp),
+                containerColor = MaterialTheme.colorScheme.surface
             ) {
                 tabs.forEachIndexed { index, tab ->
-                    NavigationRailItem(
-                        icon = { Icon(tabIcons[index], tab) },
-                        label = { Text(tab, fontSize = 12.sp) },
+                    NavigationBarItem(
+                        icon = { 
+                            Icon(
+                                tabIcons[index], 
+                                tab,
+                                modifier = Modifier.size(24.dp)
+                            ) 
+                        },
+                        label = { 
+                            Text(
+                                tab, 
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Medium
+                            ) 
+                        },
                         selected = selectedTab == index,
-                        onClick = { selectedTab = index }
+                        onClick = { selectedTab = index },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                            selectedTextColor = MaterialTheme.colorScheme.primary,
+                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                        )
                     )
                 }
             }
-
-            // Content
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0xFFF5F5F5))
-            ) {
-                when (selectedTab) {
-                    0 -> AdminDashboardTab(allUsers, allListings)
-                    1 -> AdminUsersTab(allUsers, authViewModel)
-                    2 -> AdminListingsTab(allListings, listingViewModel)
-                    3 -> AdminAnalyticsTab(allUsers, allListings)
-                }
+        }
+    ) { padding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF8F9FA))
+                .padding(padding)
+        ) {
+            when (selectedTab) {
+                0 -> AdminDashboardTab(allUsers, allListings)
+                1 -> AdminUsersTab(allUsers, authViewModel)
+                2 -> AdminListingsTab(allListings, listingViewModel)
+                3 -> AdminAnalyticsTab(allUsers, allListings)
             }
         }
     }
@@ -214,35 +221,38 @@ fun AdminDashboardTab(users: List<UserModel>, listings: List<ListingModel>) {
     val activeListings = listings.count { it.isActive }
     
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(16.dp)
     ) {
         item {
-            Text(
-                "Dashboard Overview",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Text(
-                "Welcome to Rentieo Admin Panel",
-                fontSize = 16.sp,
-                color = Color.Gray
-            )
+            Column {
+                Text(
+                    "Dashboard Overview",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Text(
+                    "Welcome to Rentieo Admin Panel",
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
 
         item {
             LazyVerticalGrid(
-                columns = GridCells.Fixed(4),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.height(200.dp)
+                columns = GridCells.Fixed(2),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.height(400.dp)
             ) {
                 item {
                     StatCard(
                         title = "Total Users",
                         value = totalUsers.toString(),
-                        subtitle = "+$verifiedUsers verified",
+                        subtitle = "$verifiedUsers verified",
                         icon = Icons.Filled.People,
                         color = Color(0xFF2196F3)
                     )
@@ -282,7 +292,7 @@ fun AdminDashboardTab(users: List<UserModel>, listings: List<ListingModel>) {
                 "Recent Activity",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
 
@@ -290,8 +300,8 @@ fun AdminDashboardTab(users: List<UserModel>, listings: List<ListingModel>) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(2.dp),
-                shape = RoundedCornerShape(12.dp)
+                elevation = CardDefaults.cardElevation(4.dp),
+                shape = RoundedCornerShape(16.dp)
             ) {
                 Column(modifier = Modifier.padding(vertical = 8.dp)) {
                     ActivityItem(Icons.Filled.PersonAdd, "New user registered", "Just now", Color(0xFF2196F3))
@@ -318,22 +328,21 @@ fun StatCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(180.dp),
+            .aspectRatio(1f),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(6.dp),
+        elevation = CardDefaults.cardElevation(8.dp),
         shape = RoundedCornerShape(20.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            // Modern gradient background
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(90.dp)
+                    .height(80.dp)
                     .background(
                         androidx.compose.ui.graphics.Brush.verticalGradient(
                             colors = listOf(
-                                color.copy(alpha = 0.08f),
-                                color.copy(alpha = 0.02f)
+                                color.copy(alpha = 0.1f),
+                                color.copy(alpha = 0.05f)
                             )
                         )
                     )
@@ -342,7 +351,7 @@ fun StatCard(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(24.dp),
+                    .padding(20.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(
@@ -352,62 +361,39 @@ fun StatCard(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(64.dp)
-                            .background(color.copy(alpha = 0.12f), RoundedCornerShape(16.dp)),
+                            .size(50.dp)
+                            .background(color.copy(alpha = 0.15f), RoundedCornerShape(12.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             icon, 
                             contentDescription = null, 
                             tint = color, 
-                            modifier = Modifier.size(32.dp)
+                            modifier = Modifier.size(24.dp)
                         )
-                    }
-                    Surface(
-                        color = Color(0xFF4CAF50).copy(alpha = 0.12f),
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                Icons.Filled.TrendingUp,
-                                contentDescription = null,
-                                tint = Color(0xFF4CAF50),
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(Modifier.width(4.dp))
-                            Text(
-                                "+12%",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF4CAF50)
-                            )
-                        }
                     }
                 }
                 
                 Column {
                     Text(
                         value,
-                        fontSize = 40.sp,
+                        fontSize = 32.sp,
                         fontWeight = FontWeight.ExtraBold,
                         color = color,
                         maxLines = 1
                     )
-                    Spacer(Modifier.height(6.dp))
+                    Spacer(Modifier.height(4.dp))
                     Text(
                         title,
-                        fontSize = 15.sp,
-                        color = Color.DarkGray,
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 1
                     )
                     Text(
                         subtitle,
-                        fontSize = 13.sp,
-                        color = Color.Gray,
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1
                     )
                 }
@@ -423,7 +409,7 @@ fun ActivityItem(icon: ImageVector, title: String, time: String, color: Color) {
             Box(
                 modifier = Modifier
                     .size(44.dp)
-                    .background(color.copy(alpha = 0.12f), RoundedCornerShape(10.dp)),
+                    .background(color.copy(alpha = 0.12f), RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(icon, null, tint = color, modifier = Modifier.size(22.dp))
@@ -439,7 +425,7 @@ fun ActivityItem(icon: ImageVector, title: String, time: String, color: Color) {
         trailingContent = {
             Surface(
                 color = Color(0xFFF5F5F5),
-                shape = RoundedCornerShape(6.dp)
+                shape = RoundedCornerShape(8.dp)
             ) {
                 Text(
                     time,
@@ -465,34 +451,40 @@ fun AdminUsersTab(users: List<UserModel>, authViewModel: AuthViewModel) {
     }
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(16.dp)
     ) {
         item {
-            Text(
-                "User Management",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Text("Manage all users and their permissions", color = Color.Gray)
+            Column {
+                Text(
+                    "User Management",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Text("Manage all users and their permissions", 
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 14.sp)
+            }
         }
 
         item {
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
                     placeholder = { Text("Search users...") },
                     leadingIcon = { Icon(Icons.Filled.Search, null) },
-                    modifier = Modifier.weight(2f)
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
                 )
                 
                 var expanded by remember { mutableStateOf(false) }
                 ExposedDropdownMenuBox(
                     expanded = expanded,
                     onExpandedChange = { expanded = it },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     OutlinedTextField(
                         value = filterRole.replaceFirstChar { it.uppercase() },
@@ -500,7 +492,10 @@ fun AdminUsersTab(users: List<UserModel>, authViewModel: AuthViewModel) {
                         readOnly = true,
                         label = { Text("Filter by Role") },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-                        modifier = Modifier.menuAnchor()
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
                     )
                     ExposedDropdownMenu(expanded, onDismissRequest = { expanded = false }) {
                         listOf("all", "rental", "labor", "admin").forEach { role ->
@@ -533,78 +528,72 @@ fun UserCard(user: UserModel, authViewModel: AuthViewModel) {
         elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(16.dp)
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f)
+                Box(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                        .background(getRoleColor(user.role.name).copy(alpha = 0.15f)),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(64.dp)
-                            .clip(CircleShape)
-                            .background(getRoleColor(user.role.name).copy(alpha = 0.15f)),
-                        contentAlignment = Alignment.Center
+                    Text(
+                        user.name.firstOrNull()?.uppercase() ?: "U",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = getRoleColor(user.role.name)
+                    )
+                }
+                Spacer(Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            user.name.firstOrNull()?.uppercase() ?: "U",
-                            fontSize = 24.sp,
+                            user.name,
                             fontWeight = FontWeight.Bold,
-                            color = getRoleColor(user.role.name)
+                            fontSize = 16.sp,
+                            maxLines = 1,
+                            modifier = Modifier.weight(1f, fill = false)
                         )
+                        if (user.isVerified) {
+                            Spacer(Modifier.width(4.dp))
+                            Icon(
+                                Icons.Filled.Verified,
+                                "Verified",
+                                tint = Color(0xFF4CAF50),
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
                     }
-                    Spacer(Modifier.width(16.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                user.name,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 17.sp,
-                                maxLines = 1,
-                                modifier = Modifier.weight(1f, fill = false)
-                            )
-                            if (user.isVerified) {
-                                Spacer(Modifier.width(6.dp))
-                                Icon(
-                                    Icons.Filled.CheckCircle,
-                                    "Verified",
-                                    tint = Color(0xFF4CAF50),
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
-                        }
-                        Spacer(Modifier.height(6.dp))
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        user.email,
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Surface(
+                        color = getRoleColor(user.role.name),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
                         Text(
-                            user.email,
-                            fontSize = 14.sp,
-                            color = Color.Gray,
-                            maxLines = 1
+                            user.role.name.uppercase(),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
                         )
-                        Spacer(Modifier.height(10.dp))
-                        Surface(
-                            color = getRoleColor(user.role.name),
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
-                            Text(
-                                user.role.name.uppercase(),
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White,
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                            )
-                        }
                     }
                 }
             }
             
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(12.dp))
             HorizontalDivider(color = Color.LightGray.copy(alpha = 0.3f))
             Spacer(Modifier.height(12.dp))
             
@@ -625,12 +614,12 @@ fun UserCard(user: UserModel, authViewModel: AuthViewModel) {
                     Icon(
                         if (user.isVerified) Icons.Filled.Block else Icons.Filled.CheckCircle,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(16.dp)
                     )
-                    Spacer(Modifier.width(6.dp))
+                    Spacer(Modifier.width(4.dp))
                     Text(
                         if (user.isVerified) "Unverify" else "Verify",
-                        fontSize = 13.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -648,12 +637,12 @@ fun UserCard(user: UserModel, authViewModel: AuthViewModel) {
                     Icon(
                         Icons.Filled.AdminPanelSettings,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(16.dp)
                     )
-                    Spacer(Modifier.width(6.dp))
+                    Spacer(Modifier.width(4.dp))
                     Text(
                         "Admin",
-                        fontSize = 13.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -669,12 +658,12 @@ fun UserCard(user: UserModel, authViewModel: AuthViewModel) {
                     Icon(
                         Icons.Filled.Delete,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(16.dp)
                     )
-                    Spacer(Modifier.width(6.dp))
+                    Spacer(Modifier.width(4.dp))
                     Text(
                         "Delete",
-                        fontSize = 13.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -690,7 +679,7 @@ fun UserCard(user: UserModel, authViewModel: AuthViewModel) {
                     Icons.Filled.Warning,
                     contentDescription = null,
                     tint = Color(0xFFF44336),
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(40.dp)
                 )
             },
             title = { 
@@ -734,17 +723,22 @@ fun AdminListingsTab(listings: List<ListingModel>, listingViewModel: ListingView
     }
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(16.dp)
     ) {
         item {
-            Text(
-                "Listing Management",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Text("Manage all listings", color = Color.Gray)
+            Column {
+                Text(
+                    "Listing Management",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Text("Manage all listings", 
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 14.sp)
+            }
         }
 
         item {
@@ -753,7 +747,8 @@ fun AdminListingsTab(listings: List<ListingModel>, listingViewModel: ListingView
                 onValueChange = { searchQuery = it },
                 placeholder = { Text("Search listings...") },
                 leadingIcon = { Icon(Icons.Filled.Search, null) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             )
         }
 
@@ -777,131 +772,126 @@ fun ListingCard(listing: ListingModel, listingViewModel: ListingViewModel) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .padding(16.dp),
+                verticalAlignment = Alignment.Top
             ) {
-                Row(
-                    modifier = Modifier.weight(1f),
-                    verticalAlignment = Alignment.Top
+                // Listing Image
+                Card(
+                    modifier = Modifier.size(80.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = CardDefaults.cardElevation(2.dp)
                 ) {
-                    // Listing Image
-                    Card(
-                        modifier = Modifier.size(100.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(2.dp)
-                    ) {
-                        if (listing.images.isNotEmpty()) {
-                            coil.compose.AsyncImage(
-                                model = listing.images.first(),
-                                contentDescription = listing.title,
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
-                        } else {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    Icons.Filled.Image,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-                                    modifier = Modifier.size(40.dp)
-                                )
-                            }
-                        }
-                    }
-                    
-                    Spacer(Modifier.width(16.dp))
-                    
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = listing.title,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 17.sp,
-                            maxLines = 2,
-                            color = Color.Black
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    if (listing.images.isNotEmpty()) {
+                        // Placeholder for no image
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.LightGray.copy(alpha = 0.3f)),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Surface(
-                                color = Color(0xFFE3F2FD),
-                                shape = RoundedCornerShape(6.dp)
+                            Icon(
+                                Icons.Filled.Image,
+                                contentDescription = null,
+                                tint = Color.Gray,
+                                modifier = Modifier.size(40.dp)
+                            )
+                        }
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Filled.Image,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                    }
+                }
+                
+                Spacer(Modifier.width(12.dp))
+                
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = listing.title,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        maxLines = 2,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Spacer(Modifier.height(6.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Surface(
+                            color = Color(0xFFE3F2FD),
+                            shape = RoundedCornerShape(6.dp)
+                        ) {
+                            Text(
+                                text = listing.category.name,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFF2196F3),
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+                        }
+                        Surface(
+                            color = if (listing.isActive) 
+                                Color(0xFF4CAF50).copy(alpha = 0.15f) 
+                            else 
+                                Color(0xFFF44336).copy(alpha = 0.15f),
+                            shape = RoundedCornerShape(6.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(5.dp)
+                                        .clip(CircleShape)
+                                        .background(
+                                            if (listing.isActive) Color(0xFF4CAF50) 
+                                            else Color(0xFFF44336)
+                                        )
+                                )
+                                Spacer(Modifier.width(4.dp))
                                 Text(
-                                    text = listing.category.name,
-                                    fontSize = 12.sp,
+                                    if (listing.isActive) "Active" else "Inactive",
+                                    fontSize = 11.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color(0xFF2196F3),
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                                    color = if (listing.isActive) Color(0xFF4CAF50) 
+                                           else Color(0xFFF44336)
                                 )
                             }
-                            Surface(
-                                color = if (listing.isActive) 
-                                    Color(0xFF4CAF50).copy(alpha = 0.15f) 
-                                else 
-                                    Color(0xFFF44336).copy(alpha = 0.15f),
-                                shape = RoundedCornerShape(6.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(6.dp)
-                                            .clip(CircleShape)
-                                            .background(
-                                                if (listing.isActive) Color(0xFF4CAF50) 
-                                                else Color(0xFFF44336)
-                                            )
-                                    )
-                                    Spacer(Modifier.width(6.dp))
-                                    Text(
-                                        if (listing.isActive) "Active" else "Inactive",
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = if (listing.isActive) Color(0xFF4CAF50) 
-                                               else Color(0xFFF44336)
-                                    )
-                                }
-                            }
                         }
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            text = "₹${listing.price}/day",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = Color(0xFF4CAF50)
-                        )
-                        Spacer(Modifier.height(6.dp))
-                        Text(
-                            text = listing.description.take(80) + 
-                                   if (listing.description.length > 80) "..." else "",
-                            fontSize = 13.sp,
-                            color = Color.Gray,
-                            maxLines = 2
-                        )
                     }
+                    Spacer(Modifier.height(6.dp))
+                    Text(
+                        text = "₹${listing.price}/day",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color(0xFF4CAF50)
+                    )
                 }
             }
             
             HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 20.dp),
+                modifier = Modifier.padding(horizontal = 16.dp),
                 color = Color.LightGray.copy(alpha = 0.3f)
             )
             
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedButton(
@@ -917,12 +907,12 @@ fun ListingCard(listing: ListingModel, listingViewModel: ListingViewModel) {
                     Icon(
                         if (listing.isActive) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(16.dp)
                     )
-                    Spacer(Modifier.width(6.dp))
+                    Spacer(Modifier.width(4.dp))
                     Text(
                         if (listing.isActive) "Hide" else "Show",
-                        fontSize = 13.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -938,12 +928,12 @@ fun ListingCard(listing: ListingModel, listingViewModel: ListingViewModel) {
                     Icon(
                         Icons.Filled.Delete,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(16.dp)
                     )
-                    Spacer(Modifier.width(6.dp))
+                    Spacer(Modifier.width(4.dp))
                     Text(
                         "Delete",
-                        fontSize = 13.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -959,7 +949,7 @@ fun ListingCard(listing: ListingModel, listingViewModel: ListingViewModel) {
                     Icons.Filled.Warning,
                     contentDescription = null,
                     tint = Color(0xFFF44336),
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(40.dp)
                 )
             },
             title = { 
@@ -1001,89 +991,78 @@ fun AdminAnalyticsTab(users: List<UserModel>, listings: List<ListingModel>) {
     val activeListings = listings.count { it.isActive }
     
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(16.dp)
     ) {
         item {
-            Text(
-                "Analytics & Reports",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Text("View platform statistics and insights", fontSize = 16.sp, color = Color.Gray)
+            Column {
+                Text(
+                    "Analytics & Reports",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Text("View platform statistics and insights", 
+                    fontSize = 14.sp, 
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
         }
 
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(2.dp),
-                shape = RoundedCornerShape(12.dp)
+                elevation = CardDefaults.cardElevation(4.dp),
+                shape = RoundedCornerShape(16.dp)
             ) {
-                Column(modifier = Modifier.padding(24.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        "User Statistics",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    
+                    Spacer(Modifier.height(16.dp))
+                    
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Text(
-                            "User Statistics",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Surface(
-                            color = Color(0xFF2196F3).copy(alpha = 0.1f),
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    Icons.Filled.People,
-                                    null,
-                                    tint = Color(0xFF2196F3),
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(Modifier.width(6.dp))
-                                Text(
-                                    "${users.size} Total",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF2196F3)
-                                )
-                            }
+                        item {
+                            AnalyticsItem(
+                                "Verified Users",
+                                verifiedUsers.toString(),
+                                "${if (users.isNotEmpty()) (verifiedUsers * 100 / users.size) else 0}%",
+                                Color(0xFF4CAF50)
+                            )
                         }
-                    }
-                    
-                    Spacer(Modifier.height(20.dp))
-                    
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        AnalyticsItem(
-                            "Verified Users",
-                            verifiedUsers.toString(),
-                            "${if (users.isNotEmpty()) (verifiedUsers * 100 / users.size) else 0}%",
-                            Color(0xFF4CAF50),
-                            modifier = Modifier.weight(1f)
-                        )
-                        AnalyticsItem(
-                            "Rental Users",
-                            rentalUsers.toString(),
-                            "${if (users.isNotEmpty()) (rentalUsers * 100 / users.size) else 0}%",
-                            Color(0xFF2196F3),
-                            modifier = Modifier.weight(1f)
-                        )
-                        AnalyticsItem(
-                            "Labor Users",
-                            laborUsers.toString(),
-                            "${if (users.isNotEmpty()) (laborUsers * 100 / users.size) else 0}%",
-                            Color(0xFFFF9800),
-                            modifier = Modifier.weight(1f)
-                        )
+                        item {
+                            AnalyticsItem(
+                                "Rental Users",
+                                rentalUsers.toString(),
+                                "${if (users.isNotEmpty()) (rentalUsers * 100 / users.size) else 0}%",
+                                Color(0xFF2196F3)
+                            )
+                        }
+                        item {
+                            AnalyticsItem(
+                                "Labor Users",
+                                laborUsers.toString(),
+                                "${if (users.isNotEmpty()) (laborUsers * 100 / users.size) else 0}%",
+                                Color(0xFFFF9800)
+                            )
+                        }
+                        item {
+                            AnalyticsItem(
+                                "Total Users",
+                                users.size.toString(),
+                                "100%",
+                                Color(0xFF9C27B0)
+                            )
+                        }
                     }
                 }
             }
@@ -1093,76 +1072,59 @@ fun AdminAnalyticsTab(users: List<UserModel>, listings: List<ListingModel>) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(2.dp),
-                shape = RoundedCornerShape(12.dp)
+                elevation = CardDefaults.cardElevation(4.dp),
+                shape = RoundedCornerShape(16.dp)
             ) {
-                Column(modifier = Modifier.padding(24.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        "Listing Statistics",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    
+                    Spacer(Modifier.height(16.dp))
+                    
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Text(
-                            "Listing Statistics",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Surface(
-                            color = Color(0xFF4CAF50).copy(alpha = 0.1f),
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    Icons.Filled.ListAlt,
-                                    null,
-                                    tint = Color(0xFF4CAF50),
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(Modifier.width(6.dp))
-                                Text(
-                                    "${listings.size} Total",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF4CAF50)
-                                )
-                            }
+                        item {
+                            AnalyticsItem(
+                                "Active Listings",
+                                activeListings.toString(),
+                                "${if (listings.isNotEmpty()) (activeListings * 100 / listings.size) else 0}%",
+                                Color(0xFF4CAF50)
+                            )
+                        }
+                        item {
+                            AnalyticsItem(
+                                "Inactive",
+                                (listings.size - activeListings).toString(),
+                                "${if (listings.isNotEmpty()) ((listings.size - activeListings) * 100 / listings.size) else 0}%",
+                                Color(0xFFF44336)
+                            )
+                        }
+                        item {
+                            AnalyticsItem(
+                                "Total Listings",
+                                listings.size.toString(),
+                                "100%",
+                                Color(0xFF2196F3)
+                            )
                         }
                     }
                     
                     Spacer(Modifier.height(20.dp))
-                    
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        AnalyticsItem(
-                            "Active Listings",
-                            activeListings.toString(),
-                            "${if (listings.isNotEmpty()) (activeListings * 100 / listings.size) else 0}%",
-                            Color(0xFF4CAF50),
-                            modifier = Modifier.weight(1f)
-                        )
-                        AnalyticsItem(
-                            "Inactive",
-                            (listings.size - activeListings).toString(),
-                            "${if (listings.isNotEmpty()) ((listings.size - activeListings) * 100 / listings.size) else 0}%",
-                            Color(0xFFF44336),
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                    
-                    Spacer(Modifier.height(20.dp))
                     HorizontalDivider()
-                    Spacer(Modifier.height(20.dp))
+                    Spacer(Modifier.height(16.dp))
                     
                     Text(
                         "Category Breakdown",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Gray
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     Spacer(Modifier.height(12.dp))
                     
@@ -1190,26 +1152,29 @@ fun AnalyticsItem(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = modifier,
+        modifier = modifier.aspectRatio(1f),
         color = color.copy(alpha = 0.08f),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(16.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             Text(
                 value,
-                fontSize = 28.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.ExtraBold,
-                color = color
+                color = color,
+                textAlign = TextAlign.Center
             )
             Spacer(Modifier.height(4.dp))
             Text(
                 label,
-                fontSize = 13.sp,
-                color = Color.Gray,
-                fontWeight = FontWeight.Medium
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center
             )
             Spacer(Modifier.height(6.dp))
             Surface(
@@ -1218,10 +1183,10 @@ fun AnalyticsItem(
             ) {
                 Text(
                     percentage,
-                    fontSize = 11.sp,
+                    fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                 )
             }
         }
@@ -1249,20 +1214,21 @@ fun CategoryBreakdownItem(category: String, count: Int, percentage: Int) {
             Text(
                 category,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.weight(1f)
             )
         }
         
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             // Progress bar
             Box(
                 modifier = Modifier
-                    .width(100.dp)
-                    .height(8.dp)
-                    .clip(RoundedCornerShape(4.dp))
+                    .width(60.dp)
+                    .height(6.dp)
+                    .clip(RoundedCornerShape(3.dp))
                     .background(Color(0xFFE0E0E0))
             ) {
                 Box(
@@ -1277,7 +1243,7 @@ fun CategoryBreakdownItem(category: String, count: Int, percentage: Int) {
                 "$count",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.width(30.dp)
+                modifier = Modifier.width(24.dp)
             )
             
             Surface(
@@ -1286,10 +1252,10 @@ fun CategoryBreakdownItem(category: String, count: Int, percentage: Int) {
             ) {
                 Text(
                     "$percentage%",
-                    fontSize = 12.sp,
+                    fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
                 )
             }
         }
