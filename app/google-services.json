@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "660729391619",
+    "project_id": "olx-rental",
+    "storage_bucket": "olx-rental.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:660729391619:android:e1fea1e76d87cb2ff87c36",
+        "android_client_info": {
+          "package_name": "com.mavrix.Olx_Rental"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "660729391619-e27lgnfrcuj5r6ref1ovn7eul27ac5ne.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mavrix.Olx_Rental",
+            "certificate_hash": "baf391cb3617c6aa77e6c3674deda5a67c9586d5"
+          }
+        },
+        {
+          "client_id": "660729391619-nn4p4not04m5auj0l3epcqks2vhsubpi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhvUdQm7t2S69d4i3t0FEeJVuf0LrC7a0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "660729391619-nn4p4not04m5auj0l3epcqks2vhsubpi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "660729391619-rcgqlh0fqf0vdin4n295q86efpkmbqrv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.olxRental"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Rentieo</string>
+    <string name="welcome_back">Welcome Back!</string>
+    <string name="sign_in_to_continue">Sign in to continue to Rentieo</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="dont_have_account">Don\'t have an account?</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="create_account">Create Account</string>
+    <string name="full_name">Full Name</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="your_marketplace">Your Marketplace for Everything</string>
+</resources>

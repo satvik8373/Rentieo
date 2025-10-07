@@ -1,0 +1,13 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // TEMPORARY TEST RULES - Allow all authenticated users
+    // Use this to test if authentication is working
+    // Replace with firestore.rules for production
+    
+    match /{document=**} {
+      // Allow read/write for any authenticated user
+      allow read, write: if request.auth != null;
+    }
+  }
+}

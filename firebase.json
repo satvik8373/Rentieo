@@ -1,0 +1,31 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "olx-rental",
+          "appId": "1:660729391619:android:e1fea1e76d87cb2ff87c36",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "olx-rental",
+          "configurations": {
+            "android": "1:660729391619:android:e1fea1e76d87cb2ff87c36",
+            "ios": "1:660729391619:ios:12b1fd4197792e24f87c36",
+            "web": "1:660729391619:web:af3fcb068055ac3ef87c36",
+            "windows": "1:660729391619:web:1f0bb668a769854ff87c36"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  }
+}
